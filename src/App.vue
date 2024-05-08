@@ -1,7 +1,11 @@
-<script setup></script>
+<script setup>
+import Login from "./components/Login.vue";
+</script>
 
 <template>
-  <div></div>
+  <div>
+    <Login />
+  </div>
 </template>
 
 <style scoped></style>
