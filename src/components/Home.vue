@@ -5,6 +5,7 @@ import SearchForm from "./SearchForm.vue";
 const todos = ref([]);
 const name = ref("");
 const searchFilter = ref("");
+const sort = ref("");
 
 const input_content = ref("");
 const input_dueDate = ref("");
@@ -33,6 +34,32 @@ const filteredItems = computed(() => {
     );
   }
 
+  switch (sort.value) {
+    case "content":
+      todos.value.sort((a, b) => {
+        return a.content.localeCompare(b.content);
+      });
+      break;
+    case "date":
+      todos.value.sort((a, b) => {
+        const dateA = new Date(a.dueDate);
+        const dateB = new Date(b.dueDate);
+
+        return dateA - dateB;
+      });
+      break;
+    case "priority":
+      todos.value.sort((a, b) => {
+        const priorityOrder = { high: 1, middle: 2, low: 3 };
+        const priorityA = priorityOrder[a.priority];
+        const priorityB = priorityOrder[b.priority];
+
+        return priorityA - priorityB;
+      });
+      break;
+    default:
+    // Handle the default case here if needed
+  }
   return items;
 });
 
@@ -142,6 +169,19 @@ onMounted(() => {
     <section class="todo-list">
       <h3>TODO LIST</h3>
       <SearchForm @search="handleSearch" />
+      <button @click="sort = 'content'" type="button" class="btn btn-secondary">
+        Sort by Content
+      </button>
+      <button @click="sort = 'date'" type="button" class="btn btn-secondary">
+        Sort by Date
+      </button>
+      <button
+        @click="sort = 'priority'"
+        type="button"
+        class="btn btn-secondary"
+      >
+        Sort by Priority
+      </button>
       <div class="list" id="todo-list">
         <div
           v-for="todo in filteredItems"
