@@ -143,6 +143,18 @@ onMounted(() => {
           </label>
 
           <div class="todo-content">
+            <span
+              class="badge rounded-pill"
+              :class="
+                todo.priority === 'high'
+                  ? 'bg-danger'
+                  : todo.priority === 'middle'
+                  ? 'bg-warning'
+                  : 'bg-success'
+              "
+              >{{ todo.priority }}</span
+            >
+
             <input type="text" v-model="todo.content" />
             <input disabled type="text" v-model="todo.dueDate" />
           </div>
