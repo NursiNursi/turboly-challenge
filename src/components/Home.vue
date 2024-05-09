@@ -162,7 +162,7 @@ onMounted(() => {
 <template>
   <main class="app">
     <section class="todo-list">
-      <h1 class="display-5 fw-bold text-center mb-4">TODO LIST</h1>
+      <h1 class="display-5 fw-bold mb-4">TODO LIST</h1>
       <div class="d-flex justify-content-between head-row">
         <SearchForm @search="handleSearch" />
         <div class="sort-by">
@@ -332,8 +332,17 @@ onMounted(() => {
               >{{ todo.priority }}</span
             >
 
-            <input type="text" v-model="todo.content" />
-            <input disabled type="text" v-model="todo.dueDate" />
+            <input
+              class="todo-description"
+              type="text"
+              v-model="todo.content"
+            />
+            <input
+              class="todo-due-date"
+              disabled
+              type="text"
+              v-model="todo.dueDate"
+            />
           </div>
 
           <div class="actions">

@@ -1,7 +1,7 @@
 :root {
   --primary: #405aea;
   --low: #12e023;
-  --middle: #e7fd1f;
+  --middle: #e2e213;
   --high: #e22828;
   --light: #eee;
   --grey: #888;
@@ -213,7 +213,7 @@ input:checked ~ .bubble::after {
   display: flex;
   align-items: center;
   background-color: #fff;
-  padding: 1rem;
+  padding: 1rem 1.5rem;
   border-radius: 0.5rem;
   box-shadow: var(--shadow);
   margin-bottom: 1rem;
@@ -230,10 +230,17 @@ input:checked ~ .bubble::after {
 }
 
 .todo-item .todo-content input {
-  color: var(--dark);
-  font-size: 1.125rem;
-  /* width: 40rem; */
   width: 100%;
+}
+
+.todo-description {
+  color: var(--dark);
+  font-size: 1.25rem;
+}
+
+.todo-due-date {
+  color: var(--grey);
+  font-weight: 600;
 }
 
 .todo-item .actions {
@@ -269,7 +276,7 @@ input:checked ~ .bubble::after {
 }
 
 .search-input {
-  border: darkgray solid 1px;
+  border: rgb(218, 218, 218) solid 1px;
   background: white;
   border-radius: 8px;
   width: 30%;
@@ -293,5 +300,16 @@ input:checked ~ .bubble::after {
   .search-input {
     width: 100%;
     margin-bottom: 1rem;
+  }
+
+  .sort-by {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sort-by button {
+    width: 48%;
   }
 }
