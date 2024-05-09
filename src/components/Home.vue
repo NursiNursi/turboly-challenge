@@ -58,7 +58,6 @@ const filteredItems = computed(() => {
       });
       break;
     default:
-    // Handle the default case here if needed
   }
   return items;
 });
@@ -99,6 +98,52 @@ onMounted(() => {
         What's up,
         <input type="text" id="name" placeholder="Name here" v-model="name" />
       </h2>
+    </section>
+
+    <section class="todo-list">
+      <h3>TODO LIST</h3>
+      <SearchForm @search="handleSearch" />
+      <button @click="sort = 'content'" type="button" class="btn btn-secondary">
+        Sort by Content
+      </button>
+      <button @click="sort = 'date'" type="button" class="btn btn-secondary">
+        Sort by Date
+      </button>
+      <button
+        @click="sort = 'priority'"
+        type="button"
+        class="btn btn-secondary"
+      >
+        Sort by Priority
+      </button>
+      <div class="list" id="todo-list">
+        <div
+          v-for="todo in filteredItems"
+          :class="`todo-item ${todo.done && 'done'}`"
+        >
+          <label>
+            <input type="checkbox" v-model="todo.done" />
+            <span
+              :class="`bubble ${
+                todo.priority == 'low'
+                  ? 'low'
+                  : todo.priority == 'middle'
+                  ? 'middle'
+                  : 'high'
+              }`"
+            ></span>
+          </label>
+
+          <div class="todo-content">
+            <input type="text" v-model="todo.content" />
+            <input type="text" v-model="todo.dueDate" />
+          </div>
+
+          <div class="actions">
+            <button class="delete" @click="removeTodo(todo)">Delete</button>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section class="create-todo">
@@ -164,52 +209,6 @@ onMounted(() => {
 
         <input type="submit" value="Add todo" />
       </form>
-    </section>
-
-    <section class="todo-list">
-      <h3>TODO LIST</h3>
-      <SearchForm @search="handleSearch" />
-      <button @click="sort = 'content'" type="button" class="btn btn-secondary">
-        Sort by Content
-      </button>
-      <button @click="sort = 'date'" type="button" class="btn btn-secondary">
-        Sort by Date
-      </button>
-      <button
-        @click="sort = 'priority'"
-        type="button"
-        class="btn btn-secondary"
-      >
-        Sort by Priority
-      </button>
-      <div class="list" id="todo-list">
-        <div
-          v-for="todo in filteredItems"
-          :class="`todo-item ${todo.done && 'done'}`"
-        >
-          <label>
-            <input type="checkbox" v-model="todo.done" />
-            <span
-              :class="`bubble ${
-                todo.priority == 'low'
-                  ? 'low'
-                  : todo.priority == 'middle'
-                  ? 'middle'
-                  : 'high'
-              }`"
-            ></span>
-          </label>
-
-          <div class="todo-content">
-            <input type="text" v-model="todo.content" />
-            <input type="text" v-model="todo.dueDate" />
-          </div>
-
-          <div class="actions">
-            <button class="delete" @click="removeTodo(todo)">Delete</button>
-          </div>
-        </div>
-      </div>
     </section>
   </main>
 </template>
