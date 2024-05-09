@@ -7,8 +7,8 @@ const search = (e) => {
 </script>
 
 <template>
-  <form class="py-4 px-4 flex items-center">
-    <div class="relative w-full">
+  <form class="search-input">
+    <div>
       <input
         @input="search"
         type="text"

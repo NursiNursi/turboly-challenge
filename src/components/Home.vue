@@ -6,6 +6,7 @@ const todos = ref([]);
 const name = ref("");
 const searchFilter = ref("");
 const sort = ref("");
+const showCreate = ref(false);
 
 const input_content = ref("");
 const input_dueDate = ref("");
@@ -75,6 +76,8 @@ const addTodo = () => {
     editable: false,
     createdAt: new Date().getTime(),
   });
+
+  showCreate.value = false;
 };
 
 const handleSearch = (search) => {
@@ -93,29 +96,34 @@ onMounted(() => {
 
 <template>
   <main class="app">
-    <section class="greeting">
-      <h2 class="title">
-        What's up,
-        <input type="text" id="name" placeholder="Name here" v-model="name" />
-      </h2>
-    </section>
-
     <section class="todo-list">
-      <h3>TODO LIST</h3>
-      <SearchForm @search="handleSearch" />
-      <button @click="sort = 'content'" type="button" class="btn btn-secondary">
-        Sort by Content
-      </button>
-      <button @click="sort = 'date'" type="button" class="btn btn-secondary">
-        Sort by Date
-      </button>
-      <button
-        @click="sort = 'priority'"
-        type="button"
-        class="btn btn-secondary"
-      >
-        Sort by Priority
-      </button>
+      <h1 class="display-5 fw-bold text-center mb-4">TODO LIST</h1>
+      <div class="d-flex justify-content-between">
+        <SearchForm @search="handleSearch" />
+        <div class="sort-by">
+          <button
+            @click="sort = 'content'"
+            type="button"
+            class="btn btn-secondary"
+          >
+            Sort by Content
+          </button>
+          <button
+            @click="sort = 'date'"
+            type="button"
+            class="btn btn-secondary"
+          >
+            Sort by Date
+          </button>
+          <button
+            @click="sort = 'priority'"
+            type="button"
+            class="btn btn-secondary"
+          >
+            Sort by Priority
+          </button>
+        </div>
+      </div>
       <div class="list" id="todo-list">
         <div
           v-for="todo in filteredItems"
@@ -136,7 +144,7 @@ onMounted(() => {
 
           <div class="todo-content">
             <input type="text" v-model="todo.content" />
-            <input type="text" v-model="todo.dueDate" />
+            <input disabled type="text" v-model="todo.dueDate" />
           </div>
 
           <div class="actions">
@@ -146,9 +154,7 @@ onMounted(() => {
       </div>
     </section>
 
-    <section class="create-todo">
-      <h3>CREATE A TODO</h3>
-
+    <section v-if="showCreate" class="create-todo">
       <form id="new-todo-form" @submit.prevent="addTodo">
         <h4>What's on your todo list?</h4>
         <input
@@ -209,6 +215,11 @@ onMounted(() => {
 
         <input type="submit" value="Add todo" />
       </form>
+    </section>
+    <section v-if="!showCreate">
+      <button class="create-new-todo" @click="showCreate = !showCreate">
+        Add new todo
+      </button>
     </section>
   </main>
 </template>

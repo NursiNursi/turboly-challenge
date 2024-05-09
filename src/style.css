@@ -39,8 +39,18 @@ body {
 section {
   margin-top: 2rem;
   margin-bottom: 2rem;
-  padding-left: 1.5rem;
-  padding-right: 1.5em;
+  padding-left: 5.5rem;
+  padding-right: 5.5em;
+}
+
+@media only screen and (max-width: 768px) {
+  /* For mobile phones: */
+  section {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    padding-left: 1rem;
+    padding-right: 1em;
+  }
 }
 
 h3 {
@@ -182,6 +192,19 @@ input:checked ~ .bubble::after {
   opacity: 0.75;
 }
 
+.create-new-todo {
+  display: block;
+  width: 100%;
+  font-size: 1.125rem;
+  padding: 1rem 1.5rem;
+  color: #fff;
+  background-color: var(--primary);
+  border-radius: 0.5rem;
+  box-shadow: var(--middle-glow);
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+}
+
 .todo-list .list {
   margin: 1rem 0;
 }
@@ -209,6 +232,8 @@ input:checked ~ .bubble::after {
 .todo-item .todo-content input {
   color: var(--dark);
   font-size: 1.125rem;
+  /* width: 40rem; */
+  width: 100%;
 }
 
 .todo-item .actions {
@@ -241,4 +266,16 @@ input:checked ~ .bubble::after {
 .todo-item.done .todo-content input {
   text-decoration: line-through;
   color: var(--grey);
+}
+
+.search-input {
+  border: darkgray solid 1px;
+  background: white;
+  border-radius: 8px;
+  width: 30%;
+}
+
+.sort-by {
+  display: flex;
+  gap: 0.5rem;
 }
