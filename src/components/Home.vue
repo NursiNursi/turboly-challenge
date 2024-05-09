@@ -58,6 +58,17 @@ const filteredItems = computed(() => {
         return priorityA - priorityB;
       });
       break;
+    case "completion":
+      todos.value.sort((a, b) => {
+        if (a.done && !b.done) {
+          return -1;
+        } else if (!a.done && b.done) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+      break;
     default:
   }
   return items;
@@ -121,6 +132,13 @@ onMounted(() => {
             class="btn btn-secondary"
           >
             Sort by Priority
+          </button>
+          <button
+            @click="sort = 'completion'"
+            type="button"
+            class="btn btn-secondary"
+          >
+            Sort by Completion
           </button>
         </div>
       </div>
