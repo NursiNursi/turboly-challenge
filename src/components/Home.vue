@@ -98,7 +98,7 @@ onMounted(() => {
   <main class="app">
     <section class="todo-list">
       <h1 class="display-5 fw-bold text-center mb-4">TODO LIST</h1>
-      <div class="d-flex justify-content-between">
+      <div class="d-flex justify-content-between head-row">
         <SearchForm @search="handleSearch" />
         <div class="sort-by">
           <button

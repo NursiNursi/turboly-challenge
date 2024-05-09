@@ -279,3 +279,19 @@ input:checked ~ .bubble::after {
   display: flex;
   gap: 0.5rem;
 }
+
+@media only screen and (max-width: 600px) {
+  .sort-by {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .head-row {
+    flex-direction: column;
+  }
+
+  .search-input {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+}
