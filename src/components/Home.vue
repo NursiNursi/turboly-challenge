@@ -8,6 +8,11 @@ const searchFilter = ref("");
 const sort = ref("");
 const showCreate = ref(false);
 
+const descriptionSort = ref(false);
+const dateSort = ref(false);
+const prioritySort = ref(false);
+const completionSort = ref(false);
+
 const input_content = ref("");
 const input_dueDate = ref("");
 const input_priority = ref(null);
@@ -37,35 +42,64 @@ const filteredItems = computed(() => {
 
   switch (sort.value) {
     case "content":
-      todos.value.sort((a, b) => {
-        return a.content.localeCompare(b.content);
+      items.sort((a, b) => {
+        if (descriptionSort.value) {
+          return a.content.localeCompare(b.content);
+        } else {
+          return b.content.localeCompare(a.content);
+        }
       });
       break;
     case "date":
-      todos.value.sort((a, b) => {
-        const dateA = new Date(a.dueDate);
-        const dateB = new Date(b.dueDate);
+      items.sort((a, b) => {
+        if (dateSort.value) {
+          const dateA = new Date(a.dueDate);
+          const dateB = new Date(b.dueDate);
 
-        return dateA - dateB;
+          return dateA - dateB;
+        } else {
+          const dateA = new Date(a.dueDate);
+          const dateB = new Date(b.dueDate);
+
+          return dateB - dateA;
+        }
       });
       break;
     case "priority":
-      todos.value.sort((a, b) => {
-        const priorityOrder = { high: 1, middle: 2, low: 3 };
-        const priorityA = priorityOrder[a.priority];
-        const priorityB = priorityOrder[b.priority];
+      items.sort((a, b) => {
+        if (prioritySort.value) {
+          const priorityOrder = { high: 1, middle: 2, low: 3 };
+          const priorityA = priorityOrder[a.priority];
+          const priorityB = priorityOrder[b.priority];
 
-        return priorityA - priorityB;
+          return priorityA - priorityB;
+        } else {
+          const priorityOrder = { high: 1, middle: 2, low: 3 };
+          const priorityA = priorityOrder[a.priority];
+          const priorityB = priorityOrder[b.priority];
+
+          return priorityB - priorityA;
+        }
       });
       break;
     case "completion":
-      todos.value.sort((a, b) => {
-        if (a.done && !b.done) {
-          return -1;
-        } else if (!a.done && b.done) {
-          return 1;
+      items.sort((a, b) => {
+        if (completionSort.value) {
+          if (a.done && !b.done) {
+            return -1;
+          } else if (!a.done && b.done) {
+            return 1;
+          } else {
+            return 0;
+          }
         } else {
-          return 0;
+          if (a.done && !b.done) {
+            return 1;
+          } else if (!a.done && b.done) {
+            return -1;
+          } else {
+            return 0;
+          }
         }
       });
       break;
@@ -99,6 +133,26 @@ const removeTodo = (todo) => {
   todos.value = todos.value.filter((t) => t !== todo);
 };
 
+const handleSortDescription = () => {
+  sort.value = "content";
+  descriptionSort.value = !descriptionSort.value;
+};
+
+const handleSortDate = () => {
+  sort.value = "date";
+  dateSort.value = !dateSort.value;
+};
+
+const handleSortPriority = () => {
+  sort.value = "priority";
+  prioritySort.value = !prioritySort.value;
+};
+
+const handleSortCompletion = () => {
+  sort.value = "completion";
+  completionSort.value = !completionSort.value;
+};
+
 onMounted(() => {
   name.value = localStorage.getItem("name") || "";
   todos.value = JSON.parse(localStorage.getItem("todos")) || [];
@@ -113,28 +167,28 @@ onMounted(() => {
         <SearchForm @search="handleSearch" />
         <div class="sort-by">
           <button
-            @click="sort = 'content'"
+            @click="handleSortDescription"
             type="button"
             class="btn btn-secondary"
           >
-            Sort by Content
+            Sort by Description
           </button>
           <button
-            @click="sort = 'date'"
+            @click="handleSortDate"
             type="button"
             class="btn btn-secondary"
           >
             Sort by Date
           </button>
           <button
-            @click="sort = 'priority'"
+            @click="handleSortPriority"
             type="button"
             class="btn btn-secondary"
           >
             Sort by Priority
           </button>
           <button
-            @click="sort = 'completion'"
+            @click="handleSortCompletion"
             type="button"
             class="btn btn-secondary"
           >
