@@ -1,18 +1,14 @@
 <script setup>
 import { ref, onMounted, computed, watch } from "vue";
+import SearchForm from "./SearchForm.vue";
 
 const todos = ref([]);
 const name = ref("");
+const searchFilter = ref("");
 
 const input_content = ref("");
 const input_dueDate = ref("");
 const input_priority = ref(null);
-
-const todos_asc = computed(() =>
-  todos.value.sort((a, b) => {
-    return b.createdAt - a.createdAt;
-  })
-);
 
 watch(name, (newVal) => {
   localStorage.setItem("name", newVal);
@@ -28,6 +24,18 @@ watch(
   }
 );
 
+const filteredItems = computed(() => {
+  let items = todos.value;
+
+  if (searchFilter.value !== "") {
+    items = items.filter((item) =>
+      item.content.toLowerCase().includes(searchFilter.value)
+    );
+  }
+
+  return items;
+});
+
 const addTodo = () => {
   if (input_content.value.trim() === "" || input_priority.value === null) {
     return;
@@ -41,6 +49,10 @@ const addTodo = () => {
     editable: false,
     createdAt: new Date().getTime(),
   });
+};
+
+const handleSearch = (search) => {
+  searchFilter.value = search;
 };
 
 const removeTodo = (todo) => {
@@ -129,9 +141,10 @@ onMounted(() => {
 
     <section class="todo-list">
       <h3>TODO LIST</h3>
+      <SearchForm @search="handleSearch" />
       <div class="list" id="todo-list">
         <div
-          v-for="todo in todos_asc"
+          v-for="todo in filteredItems"
           :class="`todo-item ${todo.done && 'done'}`"
         >
           <label>
