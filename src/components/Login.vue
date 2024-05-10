@@ -1,3 +1,13 @@
+<script setup>
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+const goTodo = () => {
+  router.push("/todo");
+};
+</script>
+
 <template>
   <div class="d-flex align-items-center justify-content-center vh-100">
     <div class="col-md-3">
@@ -17,7 +27,7 @@
           </div>
 
           <div class="my-4 d-grid">
-            <button class="btn btn-primary">Login</button>
+            <button @click="goTodo" class="btn btn-primary">Login</button>
           </div>
         </form>
       </div>
