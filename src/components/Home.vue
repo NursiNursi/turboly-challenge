@@ -3,6 +3,7 @@ import { ref, onMounted, computed, watch } from "vue";
 import SearchForm from "./SearchForm.vue";
 import SortButtons from "./SortButtons.vue";
 import List from "./List.vue";
+import CreateTodoForm from "./CreateTodoForm.vue";
 
 const todos = ref([]);
 const name = ref("");
@@ -20,10 +21,6 @@ const priorityLevels = {
   middle: 2,
   high: 1,
 };
-
-const input_content = ref("");
-const input_dueDate = ref("");
-const input_priority = ref(null);
 
 const loadFromLocalStorage = () => {
   name.value = localStorage.getItem("name") || "";
@@ -75,18 +72,8 @@ const filteredItems = computed(() => {
   return items;
 });
 
-const addTodo = () => {
-  if (!input_content.value.trim() || input_priority.value === null) return;
-
-  todos.value.push({
-    content: input_content.value,
-    dueDate: input_dueDate.value,
-    priority: input_priority.value,
-    done: false,
-    editable: false,
-    createdAt: new Date().getTime(),
-  });
-
+const handleAddTodo = (todo) => {
+  todos.value.push(todo);
   showCreate.value = false;
 };
 
@@ -99,7 +86,6 @@ const handleSearch = (search) => {
 };
 
 const handleSort = (type) => {
-  // console.log(descriptionSort);
   if (sort.value === type) {
     switch (type) {
       case "content":
@@ -141,6 +127,7 @@ const handleSort = (type) => {
 
 onMounted(loadFromLocalStorage);
 </script>
+
 <template>
   <main class="app">
     <section class="todo-list">
@@ -160,39 +147,7 @@ onMounted(loadFromLocalStorage);
     </section>
 
     <section v-if="showCreate" class="create-todo">
-      <form id="new-todo-form" @submit.prevent="addTodo">
-        <h4>What's on your todo list?</h4>
-        <input
-          type="text"
-          name="content"
-          id="content"
-          placeholder="e.g. make a video"
-          v-model="input_content"
-        />
-        <h4>Due Dates</h4>
-        <input
-          type="date"
-          name="content"
-          id="content"
-          placeholder="Enter Due Date"
-          v-model="input_dueDate"
-        />
-        <h4>Priorities</h4>
-        <div class="options">
-          <label v-for="(level, key) in priorityLevels" :key="key">
-            <input
-              type="radio"
-              name="priority"
-              :id="'priority' + key"
-              :value="key"
-              v-model="input_priority"
-            />
-            <span class="bubble" :class="key"></span>
-            <div>{{ key }}</div>
-          </label>
-        </div>
-        <input type="submit" value="Add todo" />
-      </form>
+      <CreateTodoForm @addTodo="handleAddTodo" />
     </section>
 
     <section v-if="!showCreate">
