@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, computed, watch } from "vue";
 import SearchForm from "./SearchForm.vue";
+import SortButtons from "./SortButtons.vue";
 
 const todos = ref([]);
 const name = ref("");
@@ -13,26 +14,30 @@ const dateSort = ref(false);
 const prioritySort = ref(false);
 const completionSort = ref(false);
 
+const priorityLevels = {
+  low: 3,
+  middle: 2,
+  high: 1,
+};
+
 const input_content = ref("");
 const input_dueDate = ref("");
 const input_priority = ref(null);
 
-watch(name, (newVal) => {
-  localStorage.setItem("name", newVal);
-});
+const loadFromLocalStorage = () => {
+  name.value = localStorage.getItem("name") || "";
+  todos.value = JSON.parse(localStorage.getItem("todos")) || [];
+};
 
-watch(
-  todos,
-  (newVal) => {
-    localStorage.setItem("todos", JSON.stringify(newVal));
-  },
-  {
-    deep: true,
-  }
-);
+const saveToLocalStorage = () => {
+  localStorage.setItem("todos", JSON.stringify(todos.value));
+};
+
+watch(name, saveToLocalStorage);
+watch(todos, saveToLocalStorage, { deep: true });
 
 const filteredItems = computed(() => {
-  let items = todos.value;
+  let items = [...todos.value];
 
   if (searchFilter.value !== "") {
     items = items.filter((item) =>
@@ -42,66 +47,27 @@ const filteredItems = computed(() => {
 
   switch (sort.value) {
     case "content":
-      items.sort((a, b) => {
-        if (descriptionSort.value) {
-          return a.content.localeCompare(b.content);
-        } else {
-          return b.content.localeCompare(a.content);
-        }
-      });
+      items.sort(
+        (a, b) =>
+          a.content.localeCompare(b.content) * (descriptionSort.value ? 1 : -1)
+      );
       break;
     case "date":
-      items.sort((a, b) => {
-        if (dateSort.value) {
-          const dateA = new Date(a.dueDate);
-          const dateB = new Date(b.dueDate);
-
-          return dateA - dateB;
-        } else {
-          const dateA = new Date(a.dueDate);
-          const dateB = new Date(b.dueDate);
-
-          return dateB - dateA;
-        }
-      });
+      items.sort(
+        (a, b) =>
+          (new Date(a.dueDate) - new Date(b.dueDate)) *
+          (dateSort.value ? 1 : -1)
+      );
       break;
     case "priority":
-      items.sort((a, b) => {
-        if (prioritySort.value) {
-          const priorityOrder = { high: 1, middle: 2, low: 3 };
-          const priorityA = priorityOrder[a.priority];
-          const priorityB = priorityOrder[b.priority];
-
-          return priorityA - priorityB;
-        } else {
-          const priorityOrder = { high: 1, middle: 2, low: 3 };
-          const priorityA = priorityOrder[a.priority];
-          const priorityB = priorityOrder[b.priority];
-
-          return priorityB - priorityA;
-        }
-      });
+      items.sort(
+        (a, b) =>
+          (priorityLevels[a.priority] - priorityLevels[b.priority]) *
+          (prioritySort.value ? 1 : -1)
+      );
       break;
     case "completion":
-      items.sort((a, b) => {
-        if (completionSort.value) {
-          if (a.done && !b.done) {
-            return -1;
-          } else if (!a.done && b.done) {
-            return 1;
-          } else {
-            return 0;
-          }
-        } else {
-          if (a.done && !b.done) {
-            return 1;
-          } else if (!a.done && b.done) {
-            return -1;
-          } else {
-            return 0;
-          }
-        }
-      });
+      items.sort((a, b) => (a.done - b.done) * (completionSort.value ? 1 : -1));
       break;
     default:
   }
@@ -109,9 +75,7 @@ const filteredItems = computed(() => {
 });
 
 const addTodo = () => {
-  if (input_content.value.trim() === "" || input_priority.value === null) {
-    return;
-  }
+  if (!input_content.value.trim() || input_priority.value === null) return;
 
   todos.value.push({
     content: input_content.value,
@@ -125,181 +89,86 @@ const addTodo = () => {
   showCreate.value = false;
 };
 
-const handleSearch = (search) => {
-  searchFilter.value = search;
-};
-
 const removeTodo = (todo) => {
   todos.value = todos.value.filter((t) => t !== todo);
 };
 
-const handleSortDescription = () => {
-  sort.value = "content";
-  descriptionSort.value = !descriptionSort.value;
+const handleSearch = (search) => {
+  searchFilter.value = search;
 };
 
-const handleSortDate = () => {
-  sort.value = "date";
-  dateSort.value = !dateSort.value;
+const handleSort = (type) => {
+  // console.log(descriptionSort);
+  if (sort.value === type) {
+    switch (type) {
+      case "content":
+        descriptionSort.value = !descriptionSort.value;
+        break;
+      case "date":
+        dateSort.value = !dateSort.value;
+        break;
+      case "priority":
+        prioritySort.value = !prioritySort.value;
+        break;
+      case "completion":
+        completionSort.value = !completionSort.value;
+        break;
+    }
+  } else {
+    sort.value = type;
+    descriptionSort.value =
+      dateSort.value =
+      prioritySort.value =
+      completionSort.value =
+        false;
+    switch (type) {
+      case "content":
+        descriptionSort.value = true;
+        break;
+      case "date":
+        dateSort.value = true;
+        break;
+      case "priority":
+        prioritySort.value = true;
+        break;
+      case "completion":
+        completionSort.value = true;
+        break;
+    }
+  }
 };
 
-const handleSortPriority = () => {
-  sort.value = "priority";
-  prioritySort.value = !prioritySort.value;
+const priorityClass = (priority) => {
+  return {
+    low: "low",
+    middle: "middle",
+    high: "high",
+  }[priority];
 };
 
-const handleSortCompletion = () => {
-  sort.value = "completion";
-  completionSort.value = !completionSort.value;
+const priorityBadgeClass = (priority) => {
+  return {
+    low: "bg-success",
+    middle: "bg-warning",
+    high: "bg-danger",
+  }[priority];
 };
 
-onMounted(() => {
-  name.value = localStorage.getItem("name") || "";
-  todos.value = JSON.parse(localStorage.getItem("todos")) || [];
-});
+onMounted(loadFromLocalStorage);
 </script>
-
 <template>
   <main class="app">
     <section class="todo-list">
       <h1 class="display-5 fw-bold mb-4">TODO LIST</h1>
       <div class="d-flex justify-content-between head-row">
         <SearchForm @search="handleSearch" />
-        <div class="sort-by">
-          <button
-            @click="handleSortDescription"
-            type="button"
-            class="btn btn-secondary"
-          >
-            Description
-            <svg
-              v-if="descriptionSort"
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              fill="currentColor"
-              class="bi bi-sort-down"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M3.5 2.5a.5.5 0 0 0-1 0v8.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L3.5 11.293zm3.5 1a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5M7.5 6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1z"
-              />
-            </svg>
-            <svg
-              v-else
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              fill="currentColor"
-              class="bi bi-sort-up"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M3.5 12.5a.5.5 0 0 1-1 0V3.707L1.354 4.854a.5.5 0 1 1-.708-.708l2-1.999.007-.007a.5.5 0 0 1 .7.006l2 2a.5.5 0 1 1-.707.708L3.5 3.707zm3.5-9a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5M7.5 6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1z"
-              />
-            </svg>
-          </button>
-
-          <button
-            @click="handleSortDate"
-            type="button"
-            class="btn btn-secondary"
-          >
-            Date
-            <svg
-              v-if="dateSort"
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              fill="currentColor"
-              class="bi bi-sort-down"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M3.5 2.5a.5.5 0 0 0-1 0v8.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L3.5 11.293zm3.5 1a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5M7.5 6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1z"
-              />
-            </svg>
-            <svg
-              v-else
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              fill="currentColor"
-              class="bi bi-sort-up"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M3.5 12.5a.5.5 0 0 1-1 0V3.707L1.354 4.854a.5.5 0 1 1-.708-.708l2-1.999.007-.007a.5.5 0 0 1 .7.006l2 2a.5.5 0 1 1-.707.708L3.5 3.707zm3.5-9a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5M7.5 6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1z"
-              />
-            </svg>
-          </button>
-          <button
-            @click="handleSortPriority"
-            type="button"
-            class="btn btn-secondary"
-          >
-            Priority
-            <svg
-              v-if="prioritySort"
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              fill="currentColor"
-              class="bi bi-sort-down"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M3.5 2.5a.5.5 0 0 0-1 0v8.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L3.5 11.293zm3.5 1a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5M7.5 6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1z"
-              />
-            </svg>
-            <svg
-              v-else
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              fill="currentColor"
-              class="bi bi-sort-up"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M3.5 12.5a.5.5 0 0 1-1 0V3.707L1.354 4.854a.5.5 0 1 1-.708-.708l2-1.999.007-.007a.5.5 0 0 1 .7.006l2 2a.5.5 0 1 1-.707.708L3.5 3.707zm3.5-9a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5M7.5 6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1z"
-              />
-            </svg>
-          </button>
-          <button
-            @click="handleSortCompletion"
-            type="button"
-            class="btn btn-secondary"
-          >
-            Completion
-            <svg
-              v-if="completionSort"
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              fill="currentColor"
-              class="bi bi-sort-down"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M3.5 2.5a.5.5 0 0 0-1 0v8.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L3.5 11.293zm3.5 1a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5M7.5 6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1z"
-              />
-            </svg>
-            <svg
-              v-else
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              fill="currentColor"
-              class="bi bi-sort-up"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M3.5 12.5a.5.5 0 0 1-1 0V3.707L1.354 4.854a.5.5 0 1 1-.708-.708l2-1.999.007-.007a.5.5 0 0 1 .7.006l2 2a.5.5 0 1 1-.707.708L3.5 3.707zm3.5-9a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5M7.5 6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1z"
-              />
-            </svg>
-          </button>
-        </div>
+        <SortButtons
+          @sort="handleSort"
+          :descriptionSort="descriptionSort"
+          :dateSort="dateSort"
+          :prioritySort="prioritySort"
+          :completionSort="completionSort"
+        />
       </div>
       <div class="list" id="todo-list">
         <div
@@ -308,30 +177,14 @@ onMounted(() => {
         >
           <label>
             <input type="checkbox" v-model="todo.done" />
-            <span
-              :class="`bubble ${
-                todo.priority == 'low'
-                  ? 'low'
-                  : todo.priority == 'middle'
-                  ? 'middle'
-                  : 'high'
-              }`"
-            ></span>
+            <span :class="`bubble ${priorityClass(todo.priority)}`"></span>
           </label>
-
           <div class="todo-content">
             <span
               class="badge rounded-pill"
-              :class="
-                todo.priority === 'high'
-                  ? 'bg-danger'
-                  : todo.priority === 'middle'
-                  ? 'bg-warning'
-                  : 'bg-success'
-              "
+              :class="priorityBadgeClass(todo.priority)"
               >{{ todo.priority }}</span
             >
-
             <input
               class="todo-description"
               type="text"
@@ -344,7 +197,6 @@ onMounted(() => {
               v-model="todo.dueDate"
             />
           </div>
-
           <div class="actions">
             <button class="delete" @click="removeTodo(todo)">Delete</button>
           </div>
@@ -362,7 +214,6 @@ onMounted(() => {
           placeholder="e.g. make a video"
           v-model="input_content"
         />
-
         <h4>Due Dates</h4>
         <input
           type="date"
@@ -371,49 +222,24 @@ onMounted(() => {
           placeholder="Enter Due Date"
           v-model="input_dueDate"
         />
-
         <h4>Priorities</h4>
         <div class="options">
-          <label>
+          <label v-for="(level, key) in priorityLevels" :key="key">
             <input
               type="radio"
               name="priority"
-              id="priority1"
-              value="low"
+              :id="'priority' + key"
+              :value="key"
               v-model="input_priority"
             />
-            <span class="bubble low"></span>
-            <div>Low</div>
-          </label>
-
-          <label>
-            <input
-              type="radio"
-              name="priority"
-              id="priority2"
-              value="middle"
-              v-model="input_priority"
-            />
-            <span class="bubble middle"></span>
-            <div>Middle</div>
-          </label>
-
-          <label>
-            <input
-              type="radio"
-              name="priority"
-              id="priority2"
-              value="high"
-              v-model="input_priority"
-            />
-            <span class="bubble high"></span>
-            <div>High</div>
+            <span class="bubble" :class="key"></span>
+            <div>{{ key }}</div>
           </label>
         </div>
-
         <input type="submit" value="Add todo" />
       </form>
     </section>
+
     <section v-if="!showCreate">
       <button class="create-new-todo" @click="showCreate = !showCreate">
         Add new todo
