@@ -22,15 +22,6 @@
   font-family: "montserrat", sans-serif;
 }
 
-input:not([type="radio"]):not([type="checkbox"]),
-button {
-  appearance: none;
-  border: none;
-  outline: none;
-  background: none;
-  cursor: initial;
-}
-
 body {
   background: var(--light);
   color: var(--dark);
@@ -41,16 +32,6 @@ section {
   margin-bottom: 2rem;
   padding-left: 5.5rem;
   padding-right: 5.5em;
-}
-
-@media only screen and (max-width: 768px) {
-  /* For mobile phones: */
-  section {
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-    padding-left: 1rem;
-    padding-right: 1em;
-  }
 }
 
 h3 {
@@ -82,43 +63,6 @@ h4 {
   color: var(--dark);
   font-size: 1.5rem;
   font-weight: 700;
-}
-
-.create-todo input[type="text"],
-.create-todo input[type="date"] {
-  display: block;
-  width: 100%;
-  font-size: 1.125rem;
-  padding: 1rem 1.5rem;
-  color: var(--dark);
-  background-color: #fff;
-  border-radius: 0.5rem;
-  box-shadow: var(--shadow);
-  margin-bottom: 1.5rem;
-}
-
-.create-todo .options {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.create-todo .options label {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 1.5rem;
-  background-color: #fff;
-  border-radius: 0.5rem;
-  box-shadow: var(--shadow);
-  cursor: pointer;
-}
-
-input[type="radio"],
-input[type="checkbox"] {
-  display: none;
 }
 
 .bubble {
@@ -169,27 +113,16 @@ input:checked ~ .bubble::after {
   opacity: 1;
 }
 
-.create-todo .options label div {
-  color: var(--dark);
-  font-size: 1.125rem;
-  margin-top: 1rem;
+.search-input {
+  border: rgb(218, 218, 218) solid 1px;
+  background: white;
+  border-radius: 8px;
+  width: 30%;
 }
 
-.create-todo input[type="submit"] {
-  display: block;
-  width: 100%;
-  font-size: 1.125rem;
-  padding: 1rem 1.5rem;
-  color: #fff;
-  background-color: var(--primary);
-  border-radius: 0.5rem;
-  box-shadow: var(--middle-glow);
-  cursor: pointer;
-  transition: 0.2s ease-in-out;
-}
-
-.create-todo input[type="submit"]:hover {
-  opacity: 0.75;
+.sort-by {
+  display: flex;
+  gap: 0.5rem;
 }
 
 .create-new-todo {
@@ -205,86 +138,14 @@ input:checked ~ .bubble::after {
   transition: 0.2s ease-in-out;
 }
 
-.todo-list .list {
-  margin: 1rem 0;
-}
-
-.todo-list .todo-item {
-  display: flex;
-  align-items: center;
-  background-color: #fff;
-  padding: 1rem 1.5rem;
-  border-radius: 0.5rem;
-  box-shadow: var(--shadow);
-  margin-bottom: 1rem;
-}
-
-.todo-item label {
-  display: block;
-  margin-right: 1rem;
-  cursor: pointer;
-}
-
-.todo-item .todo-content {
-  flex: 1 1 0%;
-}
-
-.todo-item .todo-content input {
-  width: 100%;
-}
-
-.todo-description {
-  color: var(--dark);
-  font-size: 1.25rem;
-}
-
-.todo-due-date {
-  color: var(--grey);
-  font-weight: 600;
-}
-
-.todo-item .actions {
-  display: flex;
-  align-items: center;
-}
-
-.todo-item .actions button {
-  display: block;
-  padding: 0.5rem;
-  border-radius: 0.25rem;
-  color: #fff;
-  cursor: pointer;
-  transition: 0.2s ease-in-out;
-}
-
-.todo-item .actions button:hover {
-  opacity: 0.75;
-}
-
-.todo-item .actions .edit {
-  margin-right: 0.5rem;
-  background-color: var(--primary);
-}
-
-.todo-item .actions .delete {
-  background-color: var(--danger);
-}
-
-.todo-item.done .todo-content input {
-  text-decoration: line-through;
-  color: var(--grey);
-}
-
-.search-input {
-  border: rgb(218, 218, 218) solid 1px;
-  background: white;
-  border-radius: 8px;
-  width: 30%;
-}
-
-.sort-by {
-  display: flex;
-  gap: 0.5rem;
+@media only screen and (max-width: 768px) {
+  /* For mobile phones: */
+  section {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    padding-left: 1rem;
+    padding-right: 1em;
+  }
 }
 
 @media only screen and (max-width: 600px) {

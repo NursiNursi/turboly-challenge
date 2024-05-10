@@ -1,3 +1,19 @@
+<script setup>
+import { ref, defineEmits, defineProps } from "vue";
+
+const emits = defineEmits(["sort"]);
+const props = defineProps([
+  "descriptionSort",
+  "dateSort",
+  "prioritySort",
+  "completionSort",
+]);
+
+const handleSort = (type) => {
+  emits("sort", type);
+};
+</script>
+
 <template>
   <div class="sort-by">
     <button
@@ -130,19 +146,3 @@
     </button>
   </div>
 </template>
-
-<script setup>
-import { ref, defineEmits, defineProps } from "vue";
-
-const emits = defineEmits(["sort"]);
-const props = defineProps([
-  "descriptionSort",
-  "dateSort",
-  "prioritySort",
-  "completionSort",
-]);
-
-const handleSort = (type) => {
-  emits("sort", type);
-};
-</script>

@@ -3,7 +3,7 @@
     <div class="col-md-3">
       <div>
         <div>
-          <h3>Welcome !</h3>
+          <h1>Welcome !</h1>
           <hr />
         </div>
         <form>
