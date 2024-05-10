@@ -1,7 +1,29 @@
-# Vue 3 + Vite
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+# Turboly Challenge
 
-## Recommended IDE Setup
+This Todo List app allows users to enter tasks along with due dates and priorities, enabling them to view and manage their tasks efficiently. Users can mark tasks as completed, sort tasks by various criteria, and access the application from any device with a responsive UI/UX design.
 
-- [VS Code](https://code.visualstudio.com/) + [Vue - Official](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (previously Volar) and disable Vetur
+
+## Features
+
+- Task Entry
+- Task Management
+- Sorting
+- Adaptive Design
+
+
+## Tech Stack
+
+**Client:** VueJs, Vue Router, Bootstrap, Vanilla CSS
+
+## Installation
+
+Follow these steps:
+
+```bash
+  git clone https://github.com/NursiNursi/turboly-challenge.git
+  cd turboly-challenge
+  npm install
+  npm run dev
+```
+    
