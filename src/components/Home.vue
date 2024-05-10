@@ -2,6 +2,7 @@
 import { ref, onMounted, computed, watch } from "vue";
 import SearchForm from "./SearchForm.vue";
 import SortButtons from "./SortButtons.vue";
+import List from "./List.vue";
 
 const todos = ref([]);
 const name = ref("");
@@ -138,22 +139,6 @@ const handleSort = (type) => {
   }
 };
 
-const priorityClass = (priority) => {
-  return {
-    low: "low",
-    middle: "middle",
-    high: "high",
-  }[priority];
-};
-
-const priorityBadgeClass = (priority) => {
-  return {
-    low: "bg-success",
-    middle: "bg-warning",
-    high: "bg-danger",
-  }[priority];
-};
-
 onMounted(loadFromLocalStorage);
 </script>
 <template>
@@ -170,38 +155,8 @@ onMounted(loadFromLocalStorage);
           :completionSort="completionSort"
         />
       </div>
-      <div class="list" id="todo-list">
-        <div
-          v-for="todo in filteredItems"
-          :class="`todo-item ${todo.done && 'done'}`"
-        >
-          <label>
-            <input type="checkbox" v-model="todo.done" />
-            <span :class="`bubble ${priorityClass(todo.priority)}`"></span>
-          </label>
-          <div class="todo-content">
-            <span
-              class="badge rounded-pill"
-              :class="priorityBadgeClass(todo.priority)"
-              >{{ todo.priority }}</span
-            >
-            <input
-              class="todo-description"
-              type="text"
-              v-model="todo.content"
-            />
-            <input
-              class="todo-due-date"
-              disabled
-              type="text"
-              v-model="todo.dueDate"
-            />
-          </div>
-          <div class="actions">
-            <button class="delete" @click="removeTodo(todo)">Delete</button>
-          </div>
-        </div>
-      </div>
+
+      <List :filteredItems="filteredItems" @remove="removeTodo" />
     </section>
 
     <section v-if="showCreate" class="create-todo">
