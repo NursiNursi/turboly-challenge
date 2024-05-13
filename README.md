@@ -1,29 +1,24 @@
+# README
 
-# Turboly Challenge
+This README would normally document whatever steps are necessary to get the
+application up and running.
 
-This Todo List app allows users to enter tasks along with due dates and priorities, enabling them to view and manage their tasks efficiently. Users can mark tasks as completed, sort tasks by various criteria, and access the application from any device with a responsive UI/UX design.
+Things you may want to cover:
 
+* Ruby version
 
-## Features
+* System dependencies
 
-- Task Entry
-- Task Management
-- Sorting
-- Adaptive Design
+* Configuration
 
+* Database creation
 
-## Tech Stack
+* Database initialization
 
-**Client:** VueJs, Vue Router, Bootstrap, Vanilla CSS
+* How to run the test suite
 
-## Installation
+* Services (job queues, cache servers, search engines, etc.)
 
-Follow these steps:
+* Deployment instructions
 
-```bash
-  git clone https://github.com/NursiNursi/turboly-challenge.git
-  cd turboly-challenge
-  npm install
-  npm run dev
-```
-    
+* ...

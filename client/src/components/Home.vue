@@ -1,15 +1,16 @@
 <script setup>
-import { ref, onMounted, computed, watch } from "vue";
+import { ref, onMounted, computed } from "vue";
 import SearchForm from "./SearchForm.vue";
 import SortButtons from "./SortButtons.vue";
 import List from "./List.vue";
 import CreateTodoForm from "./CreateTodoForm.vue";
 
 const todos = ref([]);
-const name = ref("");
 const searchFilter = ref("");
 const sort = ref("");
 const showCreate = ref(false);
+
+const API_URL = "http://localhost:3000/todos";
 
 const descriptionSort = ref(false);
 const dateSort = ref(false);
@@ -22,17 +23,12 @@ const priorityLevels = {
   high: 1,
 };
 
-const loadFromLocalStorage = () => {
-  name.value = localStorage.getItem("name") || "";
-  todos.value = JSON.parse(localStorage.getItem("todos")) || [];
-};
+onMounted(async () => {
+  const res = await fetch(API_URL);
+  todos.value = await res.json();
 
-const saveToLocalStorage = () => {
-  localStorage.setItem("todos", JSON.stringify(todos.value));
-};
-
-watch(name, saveToLocalStorage);
-watch(todos, saveToLocalStorage, { deep: true });
+  console.log(todos.value);
+});
 
 const filteredItems = computed(() => {
   let items = [...todos.value];
@@ -53,7 +49,7 @@ const filteredItems = computed(() => {
     case "date":
       items.sort(
         (a, b) =>
-          (new Date(a.dueDate) - new Date(b.dueDate)) *
+          (new Date(a.due_date) - new Date(b.due_date)) *
           (dateSort.value ? 1 : -1)
       );
       break;
@@ -65,19 +61,40 @@ const filteredItems = computed(() => {
       );
       break;
     case "completion":
-      items.sort((a, b) => (a.done - b.done) * (completionSort.value ? 1 : -1));
+      items.sort(
+        (a, b) => (a.completed - b.completed) * (completionSort.value ? 1 : -1)
+      );
       break;
     default:
   }
   return items;
 });
 
-const handleAddTodo = (todo) => {
-  todos.value.push(todo);
+const handleAddTodo = async (todo) => {
+  console.log(todo);
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      content: todo.content,
+      due_date: todo.dueDate,
+      priority: todo.priority,
+      completed: todo.completed,
+    }),
+  });
+
+  const data = await res.json();
+
+  todos.value.push(data);
   showCreate.value = false;
 };
 
-const removeTodo = (todo) => {
+const removeTodo = async (todo) => {
+  await fetch(`${API_URL}/${todo.id}`, {
+    method: "DELETE",
+  });
   todos.value = todos.value.filter((t) => t !== todo);
 };
 
@@ -124,8 +141,6 @@ const handleSort = (type) => {
     }
   }
 };
-
-onMounted(loadFromLocalStorage);
 </script>
 
 <template>
