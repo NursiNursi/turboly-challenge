@@ -62,7 +62,7 @@ const filteredItems = computed(() => {
     case "date":
       items.sort(
         (a, b) =>
-          (new Date(a.dueDate) - new Date(b.dueDate)) *
+          (new Date(a.due_date) - new Date(b.due_date)) *
           (dateSort.value ? 1 : -1)
       );
       break;
