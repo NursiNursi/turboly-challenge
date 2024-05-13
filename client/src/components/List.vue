@@ -1,3 +1,50 @@
+<script setup>
+import { defineProps, defineEmits } from "vue";
+
+const props = defineProps(["filteredItems"]);
+const emits = defineEmits(["remove"]);
+
+const priorityClass = (priority) =>
+  ({
+    low: "low",
+    middle: "middle",
+    high: "high",
+  }[priority]);
+
+const priorityBadgeClass = (priority) =>
+  ({
+    low: "bg-success",
+    middle: "bg-warning",
+    high: "bg-danger",
+  }[priority]);
+
+const toggleTodoCompletion = async (todo) => {
+  try {
+    const res = await fetch(`http://localhost:3000/todos/${todo.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        completed: !todo.completed,
+        id: todo.id,
+      }),
+    });
+
+    const data = await res.json();
+    console.log("Updated API for todo:", todo.id);
+
+    todo.completed = !todo.completed;
+  } catch (error) {
+    console.error("Failed to update API for todo:", todo.id, error);
+  }
+};
+
+const removeTodo = (todo) => {
+  emits("remove", todo);
+};
+</script>
+
 <template>
   <div class="list" id="todo-list">
     <div
@@ -34,53 +81,6 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import { defineProps, defineEmits, watch } from "vue";
-
-const props = defineProps(["filteredItems"]);
-const emits = defineEmits(["remove"]);
-
-const priorityClass = (priority) =>
-  ({
-    low: "low",
-    middle: "middle",
-    high: "high",
-  }[priority]);
-
-const priorityBadgeClass = (priority) =>
-  ({
-    low: "bg-success",
-    middle: "bg-warning",
-    high: "bg-danger",
-  }[priority]);
-
-const toggleTodoCompletion = async (todo) => {
-  try {
-    const res = await fetch(`http://localhost:3000/todos/${todo.id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        completed: !todo.completed,
-        id: todo.id,
-      }),
-    });
-
-    const data = await res.json();
-    console.log("Updated API for todo:", todo.id);
-
-    todo.completed = !todo.completed; // Update local state
-  } catch (error) {
-    console.error("Failed to update API for todo:", todo.id, error);
-  }
-};
-
-const removeTodo = (todo) => {
-  emits("remove", todo);
-};
-</script>
 
 <style scoped>
 input[type="radio"],

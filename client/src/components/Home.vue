@@ -1,13 +1,11 @@
 <script setup>
-import { ref, onMounted, computed, watch } from "vue";
+import { ref, onMounted, computed } from "vue";
 import SearchForm from "./SearchForm.vue";
 import SortButtons from "./SortButtons.vue";
 import List from "./List.vue";
 import CreateTodoForm from "./CreateTodoForm.vue";
 
 const todos = ref([]);
-const name = ref("");
-const todo_id = ref(0);
 const searchFilter = ref("");
 const sort = ref("");
 const showCreate = ref(false);
@@ -25,25 +23,12 @@ const priorityLevels = {
   high: 1,
 };
 
-const loadFromLocalStorage = () => {
-  name.value = localStorage.getItem("name") || "";
-  todos.value = JSON.parse(localStorage.getItem("todos")) || [];
-};
-
-const saveToLocalStorage = () => {
-  localStorage.setItem("todos", JSON.stringify(todos.value));
-};
-
-// onMounted(loadFromLocalStorage);
 onMounted(async () => {
   const res = await fetch(API_URL);
   todos.value = await res.json();
 
   console.log(todos.value);
 });
-
-// watch(name, saveToLocalStorage);
-// watch(todos, saveToLocalStorage, { deep: true });
 
 const filteredItems = computed(() => {
   let items = [...todos.value];
@@ -84,10 +69,6 @@ const filteredItems = computed(() => {
   }
   return items;
 });
-
-const updatePost = async () => {
-  return true;
-};
 
 const handleAddTodo = async (todo) => {
   console.log(todo);
