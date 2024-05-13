@@ -7,9 +7,12 @@ import CreateTodoForm from "./CreateTodoForm.vue";
 
 const todos = ref([]);
 const name = ref("");
+const todo_id = ref(0);
 const searchFilter = ref("");
 const sort = ref("");
 const showCreate = ref(false);
+
+const API_URL = "http://localhost:3000/todos";
 
 const descriptionSort = ref(false);
 const dateSort = ref(false);
@@ -72,8 +75,27 @@ const filteredItems = computed(() => {
   return items;
 });
 
-const handleAddTodo = (todo) => {
-  todos.value.push(todo);
+const updatePost = async () => {
+  return true;
+};
+
+const handleAddTodo = async (todo) => {
+  console.log(todo);
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      content: todo.content,
+      due_date: todo.dueDate,
+      priority: todo.priority,
+    }),
+  });
+
+  const data = await res.json();
+
+  todos.value.push(data);
   showCreate.value = false;
 };
 

@@ -46,7 +46,7 @@ const priorityBadgeClass = (priority) => {
           class="todo-due-date"
           disabled
           type="text"
-          v-model="todo.dueDate"
+          v-model="todo.due_date"
         />
       </div>
       <div class="actions">

@@ -16,9 +16,12 @@ const priorityLevels = {
 const handleAddTodo = () => {
   if (!input_content.value.trim() || input_priority.value === null) return;
 
+  // Convert the dueDate to ISO string format
+  const dueDateISO = new Date(input_dueDate.value).toISOString();
+
   emits("addTodo", {
     content: input_content.value,
-    dueDate: input_dueDate.value,
+    dueDate: dueDateISO,
     priority: input_priority.value,
   });
 
