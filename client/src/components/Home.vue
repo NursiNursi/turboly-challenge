@@ -34,8 +34,14 @@ const saveToLocalStorage = () => {
   localStorage.setItem("todos", JSON.stringify(todos.value));
 };
 
-watch(name, saveToLocalStorage);
-watch(todos, saveToLocalStorage, { deep: true });
+// onMounted(loadFromLocalStorage);
+onMounted(async () => {
+  const res = await fetch(API_URL);
+  todos.value = await res.json();
+});
+
+// watch(name, saveToLocalStorage);
+// watch(todos, saveToLocalStorage, { deep: true });
 
 const filteredItems = computed(() => {
   let items = [...todos.value];
@@ -99,7 +105,10 @@ const handleAddTodo = async (todo) => {
   showCreate.value = false;
 };
 
-const removeTodo = (todo) => {
+const removeTodo = async (todo) => {
+  await fetch(`${API_URL}/${todo.id}`, {
+    method: "DELETE",
+  });
   todos.value = todos.value.filter((t) => t !== todo);
 };
 
@@ -146,8 +155,6 @@ const handleSort = (type) => {
     }
   }
 };
-
-onMounted(loadFromLocalStorage);
 </script>
 
 <template>
