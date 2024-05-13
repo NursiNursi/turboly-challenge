@@ -38,6 +38,8 @@ const saveToLocalStorage = () => {
 onMounted(async () => {
   const res = await fetch(API_URL);
   todos.value = await res.json();
+
+  console.log(todos.value);
 });
 
 // watch(name, saveToLocalStorage);
@@ -74,7 +76,9 @@ const filteredItems = computed(() => {
       );
       break;
     case "completion":
-      items.sort((a, b) => (a.done - b.done) * (completionSort.value ? 1 : -1));
+      items.sort(
+        (a, b) => (a.completed - b.completed) * (completionSort.value ? 1 : -1)
+      );
       break;
     default:
   }
@@ -96,6 +100,7 @@ const handleAddTodo = async (todo) => {
       content: todo.content,
       due_date: todo.dueDate,
       priority: todo.priority,
+      completed: todo.completed,
     }),
   });
 

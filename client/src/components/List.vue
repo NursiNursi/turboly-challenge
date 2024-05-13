@@ -1,46 +1,25 @@
-<script setup>
-import { defineProps, defineEmits } from "vue";
-
-const props = defineProps(["filteredItems"]);
-const emits = defineEmits(["remove"]);
-
-const handleRemove = (todo) => {
-  emits("remove", todo);
-};
-
-const priorityClass = (priority) => {
-  return {
-    low: "low",
-    middle: "middle",
-    high: "high",
-  }[priority];
-};
-
-const priorityBadgeClass = (priority) => {
-  return {
-    low: "bg-success",
-    middle: "bg-warning",
-    high: "bg-danger",
-  }[priority];
-};
-</script>
-
 <template>
   <div class="list" id="todo-list">
     <div
       v-for="todo in filteredItems"
-      :class="`todo-item ${todo.done && 'done'}`"
+      :key="todo.id"
+      :class="`todo-item ${todo.completed && 'done'}`"
     >
       <label>
-        <input type="checkbox" v-model="todo.done" />
+        <input
+          type="checkbox"
+          :checked="todo.completed"
+          @change="toggleTodoCompletion(todo)"
+        />
         <span :class="`bubble ${priorityClass(todo.priority)}`"></span>
       </label>
       <div class="todo-content">
         <span
           class="badge rounded-pill"
           :class="priorityBadgeClass(todo.priority)"
-          >{{ todo.priority }}</span
         >
+          {{ todo.priority }}
+        </span>
         <input class="todo-description" type="text" v-model="todo.content" />
         <input
           class="todo-due-date"
@@ -50,11 +29,58 @@ const priorityBadgeClass = (priority) => {
         />
       </div>
       <div class="actions">
-        <button class="delete" @click="handleRemove(todo)">Delete</button>
+        <button class="delete" @click="removeTodo(todo)">Delete</button>
       </div>
     </div>
   </div>
 </template>
+
+<script setup>
+import { defineProps, defineEmits, watch } from "vue";
+
+const props = defineProps(["filteredItems"]);
+const emits = defineEmits(["remove"]);
+
+const priorityClass = (priority) =>
+  ({
+    low: "low",
+    middle: "middle",
+    high: "high",
+  }[priority]);
+
+const priorityBadgeClass = (priority) =>
+  ({
+    low: "bg-success",
+    middle: "bg-warning",
+    high: "bg-danger",
+  }[priority]);
+
+const toggleTodoCompletion = async (todo) => {
+  try {
+    const res = await fetch(`http://localhost:3000/todos/${todo.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        completed: !todo.completed,
+        id: todo.id,
+      }),
+    });
+
+    const data = await res.json();
+    console.log("Updated API for todo:", todo.id);
+
+    todo.completed = !todo.completed; // Update local state
+  } catch (error) {
+    console.error("Failed to update API for todo:", todo.id, error);
+  }
+};
+
+const removeTodo = (todo) => {
+  emits("remove", todo);
+};
+</script>
 
 <style scoped>
 input[type="radio"],

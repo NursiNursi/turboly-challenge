@@ -20,6 +20,7 @@ const handleAddTodo = () => {
     content: input_content.value,
     dueDate: input_dueDate.value,
     priority: input_priority.value,
+    completed: false,
   });
 
   input_content.value = "";
