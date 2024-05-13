@@ -1,24 +1,45 @@
-# README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+# Turboly Challenge
 
-Things you may want to cover:
+This Todo List app allows users to enter tasks along with due dates and priorities, enabling them to view and manage their tasks efficiently. Users can mark tasks as completed, sort tasks by various criteria, and access the application from any device with a responsive UI/UX design.
 
-* Ruby version
 
-* System dependencies
+## Features
 
-* Configuration
+- Task Entry
+- Task Management
+- Sorting
+- Adaptive Design
 
-* Database creation
 
-* Database initialization
+## Tech Stack
 
-* How to run the test suite
+**Client:** VueJs, Vue Router, Bootstrap, Vanilla CSS
 
-* Services (job queues, cache servers, search engines, etc.)
+**Server:** Ruby on Rails 7, sqlite3 (migrating to postgresql)
 
-* Deployment instructions
+## Installation
 
-* ...
+Follow these steps:
+
+1. Clone the repository
+```bash
+  git clone https://github.com/NursiNursi/turboly-challenge.git
+  cd turboly-challenge
+```
+
+2. Apply pending database migrations and start the rails server
+```bash
+  rails db:migrate
+  rails s
+```
+
+3. Start the Vue app
+```bash
+  npm install
+  npm run dev
+```
+
+## Demo
+
+Vercel Demo Link: https://turboly-challenge.vercel.app/
